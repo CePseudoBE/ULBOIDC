@@ -1,5 +1,6 @@
 import { Oauth2Driver } from '@adonisjs/ally'
 import type { HttpContext } from '@adonisjs/core/http'
+import qs from 'qs'
 import type {
   AllyDriverContract,
   AllyUserContract,
@@ -51,6 +52,11 @@ export class UlbOidcDriver
     this.loadState()
   }
 
+  protected loadState() {
+    super.loadState()
+    console.log('Loaded state from cookie:', this.stateCookieValue)
+  }
+
   /**
    * Configure les paramètres supplémentaires pour la requête de redirection.
    * Ici, on s'assure que le paramètre 'response_type' est défini sur 'code'.
@@ -65,6 +71,47 @@ export class UlbOidcDriver
    */
   accessDenied() {
     return this.ctx.request.input('error') === 'access_denied'
+  }
+
+  async accessToken(): Promise<UlbOidcAccessToken> {
+    const code = this.ctx.request.input('code')
+    console.log('Code reçu pour token:', code)
+
+    const body = qs.stringify({
+      grant_type: 'authorization_code',
+      code,
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
+      redirect_uri: this.config.callbackUrl,
+    })
+
+    const response = await fetch(this.accessTokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body,
+    })
+
+    const tokenResponse = (await response.json()) as {
+      access_token: string
+      token_type: string
+      refresh_token?: string
+      expires_in?: number
+      id_token?: string
+      scope?: string
+    }
+
+    console.log('Réponse access token:', tokenResponse)
+
+    if (!tokenResponse.access_token) {
+      throw new Error('Aucun token reçu')
+    }
+
+    return {
+      token: tokenResponse.access_token,
+      type: 'bearer',
+    }
   }
 
   /**
