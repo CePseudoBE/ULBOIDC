@@ -69,6 +69,7 @@ export class UlbOidcDriver
     callback?: (request: ApiRequestContract) => void
   ): Promise<AllyUserContract<UlbOidcAccessToken>> {
     const accessToken = await this.accessToken()
+    console.log(accessToken)
     const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl)
 
     request.header('Authorization', `Bearer ${accessToken.token}`)
@@ -77,12 +78,16 @@ export class UlbOidcDriver
       callback(request)
     }
 
+    console.log('ça passe')
+
     const userInfo = await request.get().then((res) => res.body())
 
+    console.log(userInfo)
+
     return {
-      id: userInfo.sub,
-      nickName: userInfo.preferred_username,
-      name: `${userInfo.given_name} ${userInfo.family_name}`,
+      id: userInfo,
+      nickName: userInfo,
+      name: userInfo,
       email: userInfo.email,
       emailVerificationState: 'unsupported',
       avatarUrl: null,
