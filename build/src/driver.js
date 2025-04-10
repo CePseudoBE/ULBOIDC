@@ -66,7 +66,14 @@ export class UlbOidcDriver extends Oauth2Driver {
         try {
             const response = await request.get();
             const userInfo = await response.body;
-            console.log('[OIDC] ✅ userInfo brut reçu:', userInfo);
+            console.log('[OIDC] ➤ Status HTTP:', response.status);
+            if ('text' in response) {
+                const raw = await response.text();
+                console.log('[OIDC] ➤ Contenu brut:', raw);
+            }
+            else {
+                console.log('[OIDC] ➤ Pas de méthode .text() sur la réponse');
+            }
             if (!userInfo || !userInfo.email) {
                 console.warn('[OIDC] ⚠️ Réponse inattendue: userInfo ne contient pas "email"');
             }

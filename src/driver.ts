@@ -106,7 +106,6 @@ export class UlbOidcDriver
   async user(
     callback?: (request: ApiRequestContract) => void
   ): Promise<AllyUserContract<UlbOidcAccessToken>> {
-
     const accessToken = await this.accessToken()
 
     const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl)
@@ -121,8 +120,14 @@ export class UlbOidcDriver
     try {
       const response = await request.get()
       const userInfo = await response.body
+      console.log('[OIDC] ➤ Status HTTP:', response.status)
 
-      console.log('[OIDC] ✅ userInfo brut reçu:', userInfo)
+      if ('text' in response) {
+        const raw = await response.text()
+        console.log('[OIDC] ➤ Contenu brut:', raw)
+      } else {
+        console.log('[OIDC] ➤ Pas de méthode .text() sur la réponse')
+      }
 
       if (!userInfo || !userInfo.email) {
         console.warn('[OIDC] ⚠️ Réponse inattendue: userInfo ne contient pas "email"')
