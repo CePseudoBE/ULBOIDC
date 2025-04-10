@@ -56,20 +56,16 @@ export class UlbOidcDriver extends Oauth2Driver {
         };
     }
     async user(callback) {
-        console.log('[OIDC] ➤ Appel à user()');
         const accessToken = await this.accessToken();
-        console.log('[OIDC] ✅ Token obtenu:', accessToken);
         const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl);
         request.header('Authorization', `Bearer ${accessToken.token}`);
         request.header('Accept', 'application/json');
-        console.log('[OIDC] ➤ Requête vers:', this.config.userInfoUrl || this.userInfoUrl);
         if (typeof callback === 'function') {
-            console.log('[OIDC] ➤ Callback détecté, application...');
             callback(request);
         }
         try {
             const response = await request.get();
-            const userInfo = response.body();
+            const userInfo = await response.json();
             console.log('[OIDC] ✅ userInfo brut reçu:', userInfo);
             if (!userInfo || !userInfo.email) {
                 console.warn('[OIDC] ⚠️ Réponse inattendue: userInfo ne contient pas "email"');
