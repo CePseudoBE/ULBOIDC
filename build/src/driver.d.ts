@@ -10,6 +10,7 @@ export type UlbOidcConfig = {
     clientId: string;
     clientSecret: string;
     callbackUrl: string;
+    serverUrl: string;
     authorizeUrl?: string;
     accessTokenUrl?: string;
     userInfoUrl?: string;
@@ -25,7 +26,6 @@ export declare class UlbOidcDriver extends Oauth2Driver<UlbOidcAccessToken, UlbO
     protected stateParamName: string;
     protected scopeParamName: string;
     protected scopesSeparator: string;
-    protected scopes: UlbOidcScopes[];
     constructor(ctx: HttpContext, config: UlbOidcConfig);
     accessDenied(): boolean;
     user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<UlbOidcAccessToken>>;
