@@ -13,6 +13,7 @@ export type UlbOidcConfig = {
   clientId: string
   clientSecret: string
   callbackUrl: string
+  serverUrl: string
   authorizeUrl?: string
   accessTokenUrl?: string
   userInfoUrl?: string
@@ -22,9 +23,9 @@ export class UlbOidcDriver
   extends Oauth2Driver<UlbOidcAccessToken, UlbOidcScopes>
   implements AllyDriverContract<UlbOidcAccessToken, UlbOidcScopes>
 {
-  protected authorizeUrl = 'https://auth.ulb.be/oidc/oidcAuthorize'
-  protected accessTokenUrl = 'https://auth.ulb.be/oidc/oidcAccessToken'
-  protected userInfoUrl = 'https://auth.ulb.be/oidc/oidcProfile'
+  protected authorizeUrl: string
+  protected accessTokenUrl: string
+  protected userInfoUrl: string
 
   protected codeParamName = 'code'
   protected errorParamName = 'error'
@@ -32,13 +33,16 @@ export class UlbOidcDriver
   protected stateParamName = 'state'
   protected scopeParamName = 'scope'
   protected scopesSeparator = ' '
-  protected scopes: UlbOidcScopes[] = ['openid', 'profile', 'email', 'eduperson']
 
   constructor(
     ctx: HttpContext,
     public config: UlbOidcConfig
   ) {
     super(ctx, config)
+    this.authorizeUrl = config.authorizeUrl || `https://${config.serverUrl}/oidc/oidcAuthorize`
+    this.accessTokenUrl =
+      config.accessTokenUrl || `https://${config.serverUrl}/oidc/oidcAccessToken`
+    this.userInfoUrl = config.userInfoUrl || `https://${config.serverUrl}/oidc/oidcProfile`
     this.loadState()
   }
 

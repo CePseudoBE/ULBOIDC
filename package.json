@@ -1,5 +1,5 @@
 {
-  "name": "ULBOidc Ally",
+  "name": "ulboidc-ally",
   "description": "Ally kit to serve ULB Oidc authentication",
   "version": "1.0.0",
   "main": "index.js",
