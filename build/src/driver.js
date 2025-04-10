@@ -19,9 +19,23 @@ export class UlbOidcDriver extends Oauth2Driver {
         this.userInfoUrl = config.userInfoUrl || `https://${config.serverUrl}/oidc/oidcProfile`;
         this.loadState();
     }
+    /**
+     * Configure les paramètres supplémentaires pour la requête de redirection.
+     * Ici, on s'assure que le paramètre 'response_type' est défini sur 'code'.
+     */
+    configureRedirectRequest(request) {
+        request.param('response_type', 'code');
+        // Ajoute d'autres paramètres si nécessaire
+    }
+    /**
+     * Vérifie si l'accès a été refusé par l'utilisateur.
+     */
     accessDenied() {
         return this.ctx.request.input('error') === 'access_denied';
     }
+    /**
+     * Récupère les informations de l'utilisateur à partir du fournisseur OIDC.
+     */
     async user(callback) {
         const accessToken = await this.accessToken();
         const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl);
@@ -41,6 +55,9 @@ export class UlbOidcDriver extends Oauth2Driver {
             token: accessToken,
         };
     }
+    /**
+     * Récupère les informations de l'utilisateur à partir d'un token d'accès.
+     */
     async userFromToken(token, callback) {
         const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl);
         request.header('Authorization', `Bearer ${token}`);
@@ -63,6 +80,9 @@ export class UlbOidcDriver extends Oauth2Driver {
         };
     }
 }
+/**
+ * Fonction de service pour initialiser le pilote UlbOidcDriver.
+ */
 export function ulbOidcService(config) {
     return (ctx) => new UlbOidcDriver(ctx, config);
 }

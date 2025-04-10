@@ -1,6 +1,6 @@
 import { Oauth2Driver } from '@adonisjs/ally'
 import type { HttpContext } from '@adonisjs/core/http'
-import type { AllyDriverContract, AllyUserContract, ApiRequestContract } from '@adonisjs/ally/types'
+import type { AllyDriverContract, AllyUserContract, ApiRequestContract, RedirectRequestContract } from '@adonisjs/ally/types'
 
 export type UlbOidcAccessToken = {
   token: string
@@ -46,10 +46,25 @@ export class UlbOidcDriver
     this.loadState()
   }
 
+  /**
+   * Configure les paramètres supplémentaires pour la requête de redirection.
+   * Ici, on s'assure que le paramètre 'response_type' est défini sur 'code'.
+   */
+  protected configureRedirectRequest(request: RedirectRequestContract<UlbOidcScopes>) {
+    request.param('response_type', 'code')
+    // Ajoute d'autres paramètres si nécessaire
+  }
+
+  /**
+   * Vérifie si l'accès a été refusé par l'utilisateur.
+   */
   accessDenied() {
     return this.ctx.request.input('error') === 'access_denied'
   }
 
+  /**
+   * Récupère les informations de l'utilisateur à partir du fournisseur OIDC.
+   */
   async user(
     callback?: (request: ApiRequestContract) => void
   ): Promise<AllyUserContract<UlbOidcAccessToken>> {
@@ -76,6 +91,9 @@ export class UlbOidcDriver
     }
   }
 
+  /**
+   * Récupère les informations de l'utilisateur à partir d'un token d'accès.
+   */
   async userFromToken(
     token: string,
     callback?: (request: ApiRequestContract) => void
@@ -106,6 +124,9 @@ export class UlbOidcDriver
   }
 }
 
+/**
+ * Fonction de service pour initialiser le pilote UlbOidcDriver.
+ */
 export function ulbOidcService(config: UlbOidcConfig): (ctx: HttpContext) => UlbOidcDriver {
   return (ctx) => new UlbOidcDriver(ctx, config)
 }
