@@ -1,6 +1,11 @@
 import { Oauth2Driver } from '@adonisjs/ally'
 import type { HttpContext } from '@adonisjs/core/http'
-import type { AllyDriverContract, AllyUserContract, ApiRequestContract, RedirectRequestContract } from '@adonisjs/ally/types'
+import type {
+  AllyDriverContract,
+  AllyUserContract,
+  ApiRequestContract,
+  RedirectRequestContract,
+} from '@adonisjs/ally/types'
 
 export type UlbOidcAccessToken = {
   token: string
@@ -68,6 +73,7 @@ export class UlbOidcDriver
   async user(
     callback?: (request: ApiRequestContract) => void
   ): Promise<AllyUserContract<UlbOidcAccessToken>> {
+    console.log('ca passe ici')
     const accessToken = await this.accessToken()
     console.log(accessToken)
     const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl)

@@ -37,6 +37,7 @@ export class UlbOidcDriver extends Oauth2Driver {
      * Récupère les informations de l'utilisateur à partir du fournisseur OIDC.
      */
     async user(callback) {
+        console.log('ca passe ici');
         const accessToken = await this.accessToken();
         console.log(accessToken);
         const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl);
