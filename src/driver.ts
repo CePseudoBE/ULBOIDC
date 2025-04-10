@@ -107,7 +107,6 @@ export class UlbOidcDriver
     callback?: (request: ApiRequestContract) => void
   ): Promise<AllyUserContract<UlbOidcAccessToken>> {
     const accessToken = await this.accessToken()
-
     const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl)
 
     request.header('Authorization', `Bearer ${accessToken.token}`)
@@ -118,20 +117,9 @@ export class UlbOidcDriver
     }
 
     try {
-      const response = await request.get()
-      const userInfo = await response.body
-      console.log('[OIDC] ➤ Status HTTP:', response.status)
+      const userInfo = await request.get() // pas .body(), pas .json()
 
-      if ('text' in response) {
-        const raw = await response.text()
-        console.log('[OIDC] ➤ Contenu brut:', raw)
-      } else {
-        console.log('[OIDC] ➤ Pas de méthode .text() sur la réponse')
-      }
-
-      if (!userInfo || !userInfo.email) {
-        console.warn('[OIDC] ⚠️ Réponse inattendue: userInfo ne contient pas "email"')
-      }
+      console.log('[OIDC] ✅ userInfo brut reçu:', userInfo)
 
       return {
         id: userInfo.sub || userInfo.id || 'unknown',
@@ -150,6 +138,7 @@ export class UlbOidcDriver
       throw error
     }
   }
+
 
   /**
    * Récupère les informations de l'utilisateur à partir d'un token d'accès.
