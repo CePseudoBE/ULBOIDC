@@ -120,7 +120,7 @@ export class UlbOidcDriver
 
     try {
       const response = await request.get()
-      const userInfo = await response.json()
+      const userInfo = await response.body
 
       console.log('[OIDC] ✅ userInfo brut reçu:', userInfo)
 
