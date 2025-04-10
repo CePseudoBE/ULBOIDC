@@ -28,19 +28,9 @@ export declare class UlbOidcDriver extends Oauth2Driver<UlbOidcAccessToken, UlbO
     protected scopesSeparator: string;
     constructor(ctx: HttpContext, config: UlbOidcConfig);
     protected loadState(): void;
-    /**
-     * Configure les paramètres supplémentaires pour la requête de redirection.
-     * Ici, on s'assure que le paramètre 'response_type' est défini sur 'code'.
-     */
     protected configureRedirectRequest(request: RedirectRequestContract<UlbOidcScopes>): void;
-    /**
-     * Vérifie si l'accès a été refusé par l'utilisateur.
-     */
     accessDenied(): boolean;
     accessToken(): Promise<UlbOidcAccessToken>;
-    /**
-     * Récupère les informations de l'utilisateur à partir du fournisseur OIDC.
-     */
     user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<UlbOidcAccessToken>>;
     /**
      * Récupère les informations de l'utilisateur à partir d'un token d'accès.

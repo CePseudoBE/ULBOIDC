@@ -57,25 +57,16 @@ export class UlbOidcDriver
     console.log('Loaded state from cookie:', this.stateCookieValue)
   }
 
-  /**
-   * Configure les paramètres supplémentaires pour la requête de redirection.
-   * Ici, on s'assure que le paramètre 'response_type' est défini sur 'code'.
-   */
   protected configureRedirectRequest(request: RedirectRequestContract<UlbOidcScopes>) {
     request.param('response_type', 'code')
-    // Ajoute d'autres paramètres si nécessaire
   }
 
-  /**
-   * Vérifie si l'accès a été refusé par l'utilisateur.
-   */
   accessDenied() {
     return this.ctx.request.input('error') === 'access_denied'
   }
 
   async accessToken(): Promise<UlbOidcAccessToken> {
     const code = this.ctx.request.input('code')
-    console.log('Code reçu pour token:', code)
 
     const body = qs.stringify({
       grant_type: 'authorization_code',
@@ -102,8 +93,6 @@ export class UlbOidcDriver
       scope?: string
     }
 
-    console.log('Réponse access token:', tokenResponse)
-
     if (!tokenResponse.access_token) {
       throw new Error('Aucun token reçu')
     }
@@ -114,38 +103,51 @@ export class UlbOidcDriver
     }
   }
 
-  /**
-   * Récupère les informations de l'utilisateur à partir du fournisseur OIDC.
-   */
   async user(
     callback?: (request: ApiRequestContract) => void
   ): Promise<AllyUserContract<UlbOidcAccessToken>> {
-    console.log('ca passe ici')
+    console.log('[OIDC] ➤ Appel à user()')
+
     const accessToken = await this.accessToken()
-    console.log(accessToken)
+    console.log('[OIDC] ✅ Token obtenu:', accessToken)
+
     const request = this.httpClient(this.config.userInfoUrl || this.userInfoUrl)
 
     request.header('Authorization', `Bearer ${accessToken.token}`)
+    request.header('Accept', 'application/json')
+
+    console.log('[OIDC] ➤ Requête vers:', this.config.userInfoUrl || this.userInfoUrl)
 
     if (typeof callback === 'function') {
+      console.log('[OIDC] ➤ Callback détecté, application...')
       callback(request)
     }
 
-    console.log('ça passe')
+    try {
+      const response = await request.get()
+      const userInfo = response.body()
 
-    const userInfo = await request.get().then((res) => res.body())
+      console.log('[OIDC] ✅ userInfo brut reçu:', userInfo)
 
-    console.log(userInfo)
+      if (!userInfo || !userInfo.email) {
+        console.warn('[OIDC] ⚠️ Réponse inattendue: userInfo ne contient pas "email"')
+      }
 
-    return {
-      id: userInfo,
-      nickName: userInfo,
-      name: userInfo,
-      email: userInfo.email,
-      emailVerificationState: 'unsupported',
-      avatarUrl: null,
-      original: userInfo,
-      token: accessToken,
+      return {
+        id: userInfo.sub || userInfo.id || 'unknown',
+        nickName: userInfo.preferred_username || userInfo.cn || 'unknown',
+        name: userInfo.name || `${userInfo.given_name ?? ''} ${userInfo.family_name ?? ''}`.trim(),
+        email: userInfo.email || userInfo.mail || 'unknown',
+        emailVerificationState: 'unsupported',
+        avatarUrl: null,
+        original: userInfo,
+        token: accessToken,
+      }
+    } catch (error) {
+      console.error('[OIDC] ❌ Erreur lors de la récupération du profil utilisateur')
+      console.error('[OIDC] ➤ Message:', error.message)
+      console.error('[OIDC] ➤ Stack:', error.stack)
+      throw error
     }
   }
 
