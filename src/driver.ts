@@ -58,6 +58,7 @@ export class UlbOidcDriver
 
   protected configureRedirectRequest(request: RedirectRequestContract<UlbOidcScopes>) {
     request.param('response_type', 'code')
+    request.scopes(['openid', 'profile', 'email'])
   }
 
   accessDenied() {

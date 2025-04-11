@@ -25,6 +25,7 @@ export class UlbOidcDriver extends Oauth2Driver {
     }
     configureRedirectRequest(request) {
         request.param('response_type', 'code');
+        request.scopes(['openid', 'profile', 'email']);
     }
     accessDenied() {
         return this.ctx.request.input('error') === 'access_denied';
