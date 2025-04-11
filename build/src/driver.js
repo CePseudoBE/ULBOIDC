@@ -10,7 +10,7 @@ export class UlbOidcDriver extends Oauth2Driver {
     stateCookieName = 'ulb_oidc_oauth_state';
     stateParamName = 'state';
     scopeParamName = 'scope';
-    scopesSeparator = ' ';
+    scopesSeparator = ',';
     constructor(ctx, config) {
         super(ctx, config);
         this.config = config;
@@ -22,7 +22,6 @@ export class UlbOidcDriver extends Oauth2Driver {
     }
     loadState() {
         super.loadState();
-        console.log('Loaded state from cookie:', this.stateCookieValue);
     }
     configureRedirectRequest(request) {
         request.param('response_type', 'code');
