@@ -64,13 +64,12 @@ export class UlbOidcDriver extends Oauth2Driver {
             callback(request);
         }
         try {
-            const userInfo = await request.get(); // pas .body(), pas .json()
-            console.log('[OIDC] ✅ userInfo brut reçu:', userInfo);
+            const userInfo = await request.get();
             return {
                 id: userInfo.sub || userInfo.id || 'unknown',
-                nickName: userInfo.preferred_username || userInfo.cn || 'unknown',
+                nickName: userInfo.name || 'unknown',
                 name: userInfo.name || `${userInfo.given_name ?? ''} ${userInfo.family_name ?? ''}`.trim(),
-                email: userInfo.email || userInfo.mail || 'unknown',
+                email: userInfo.email || 'unknown',
                 emailVerificationState: 'unsupported',
                 avatarUrl: null,
                 original: userInfo,
@@ -78,9 +77,6 @@ export class UlbOidcDriver extends Oauth2Driver {
             };
         }
         catch (error) {
-            console.error('[OIDC] ❌ Erreur lors de la récupération du profil utilisateur');
-            console.error('[OIDC] ➤ Message:', error.message);
-            console.error('[OIDC] ➤ Stack:', error.stack);
             throw error;
         }
     }
