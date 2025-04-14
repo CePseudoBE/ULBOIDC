@@ -10,7 +10,7 @@ export class UlbOidcDriver extends Oauth2Driver {
     stateCookieName = 'ulb_oidc_oauth_state';
     stateParamName = 'state';
     scopeParamName = 'scope';
-    scopesSeparator = ',';
+    scopesSeparator = ' ';
     constructor(ctx, config) {
         super(ctx, config);
         this.config = config;
@@ -25,7 +25,7 @@ export class UlbOidcDriver extends Oauth2Driver {
     }
     configureRedirectRequest(request) {
         request.param('response_type', 'code');
-        request.scopes(['openid', 'profile', 'email']);
+        request.scopes(['openid', 'profile', 'email', 'eduperson']);
     }
     accessDenied() {
         return this.ctx.request.input('error') === 'access_denied';
