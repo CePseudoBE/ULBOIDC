@@ -38,7 +38,7 @@ export class UlbOidcDriver
   protected stateCookieName = 'ulb_oidc_oauth_state'
   protected stateParamName = 'state'
   protected scopeParamName = 'scope'
-  protected scopesSeparator = ','
+  protected scopesSeparator = ' '
 
   constructor(
     ctx: HttpContext,
