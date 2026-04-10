@@ -66,10 +66,10 @@ export class UlbOidcDriver extends Oauth2Driver {
         try {
             const userInfo = await request.get();
             return {
-                id: userInfo.sub || userInfo.id || 'unknown',
-                nickName: userInfo.name || 'unknown',
-                name: userInfo.name || `${userInfo.given_name ?? ''} ${userInfo.family_name ?? ''}`.trim(),
-                email: userInfo.email || 'unknown',
+                id: userInfo.sub || userInfo.uid || userInfo.id || 'unknown',
+                nickName: userInfo.cn || userInfo.name || 'unknown',
+                name: userInfo.cn || userInfo.name || `${userInfo.givenName ?? userInfo.given_name ?? ''} ${userInfo.sn ?? userInfo.family_name ?? ''}`.trim(),
+                email: userInfo.mail || userInfo.email || 'unknown',
                 emailVerificationState: 'unsupported',
                 avatarUrl: null,
                 original: userInfo,
