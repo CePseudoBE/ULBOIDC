@@ -1,7 +1,7 @@
 {
   "name": "ulboidc-ally",
   "description": "Ally kit to serve ULB Oidc authentication",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "build/index.js",
   "type": "module",
   "files": [
