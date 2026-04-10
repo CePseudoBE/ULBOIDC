@@ -1,7 +1,7 @@
 {
   "name": "ulboidc-ally",
   "description": "Ally kit to serve ULB Oidc authentication",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "build/index.js",
   "type": "module",
   "files": [
@@ -17,18 +17,19 @@
     "build": "tsc"
   },
   "devDependencies": {
-    "@adonisjs/ally": "^5.0.0-7",
-    "@adonisjs/core": "^6.1.5-32",
-    "@adonisjs/eslint-config": "^1.3.0",
+    "@adonisjs/ally": "^6.0.0",
+    "@adonisjs/core": "^7.0.0",
+    "@adonisjs/eslint-config": "^2.0.0",
     "@adonisjs/prettier-config": "^1.3.0",
-    "@adonisjs/tsconfig": "^1.3.0",
+    "@adonisjs/tsconfig": "^1.4.0",
     "@swc/core": "^1.6.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "@types/node": "^25.6.0",
+    "@types/qs": "^6.15.0",
+    "typescript": "~5.8.0"
   },
   "peerDependencies": {
-    "@adonisjs/ally": "^5.0.0-7",
-    "@adonisjs/core": "^6.1.5-32"
+    "@adonisjs/ally": "^6.0.0",
+    "@adonisjs/core": "^7.0.0"
   },
   "author": "Hoffmann Axel",
   "license": "MIT",
