@@ -117,7 +117,8 @@ export class UlbOidcDriver
     }
 
     try {
-      const userInfo = await request.get()
+      const response = await request.get()
+      const userInfo = typeof response === 'string' ? JSON.parse(response) : response
 
       return {
         id: userInfo.sub || userInfo.uid || userInfo.id || 'unknown',
